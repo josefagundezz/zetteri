@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Dashboard - Zetteri</title>
+    <link rel="icon" type="image/x-icon" href="zetteri-favicon.png" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body class="bg-gradient-to-br from-[#f6f8fa] to-[#e3eaf6] dark:from-[#14213d] dark:to-[#22272b]">
+    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+      <div class="layout-container flex h-full grow flex-col">
+        <div id="main-header"></div>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <p class="text-[#111418] tracking-light text-[32px] font-bold leading-tight min-w-72">Dashboard</p>
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal"
+              >
+                <span class="truncate">Add Appointment</span>
+              </button>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Upcoming Appointments</h2>
+            <div class="p-4">
+              <div class="flex items-stretch justify-between gap-4 rounded-lg">
+                <div class="flex flex-col gap-1 flex-[2_2_0px]">
+                  <p class="text-[#111418] text-base font-bold leading-tight">Client Meeting with Sarah</p>
+                  <p class="text-[#637588] text-sm font-normal leading-normal">10:00 AM - 11:00 AM</p>
+                </div>
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex-1"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDef9T1lIoH9KlNuGadX9DGWYTe1LBiNtYgCGC_xJVTHgQjms3hkr-k94ngiO5hXas-ZCdmAMRKxOjQ8ylX11iUdlTWdox-46BRnsBFgTiwAEaPRYuhixyAmXLz4n_krFm2iYfqLIilx2XSJAcoBWysu6xApMC5SEdRYdFeRCie0yXVPXP4pbBsG4qSUbhjhWhPca1KGJdTxjeSdr_HOEhTDiz8-zw6x-7GqjiO2BaTURs3zuEnJ0zQLBdRH6UZpGJQor50gMwj0eMR");'
+                ></div>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex items-stretch justify-between gap-4 rounded-lg">
+                <div class="flex flex-col gap-1 flex-[2_2_0px]">
+                  <p class="text-[#111418] text-base font-bold leading-tight">Consultation with David</p>
+                  <p class="text-[#637588] text-sm font-normal leading-normal">2:00 PM - 3:00 PM</p>
+                </div>
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex-1"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAWQgiJrcefufuiP6__hR1ixtEaNecdqnoBSiA12rnaWcfNYnKdvQNoMmn72Jol7TwHNIGVpd-dUuIcXIlrhkL7z1G7quzjqAFArAEv0r_cwLN3g-hy0ykC7mZ24PTZ6RtPIPQ1Yyv0aYwOHmV_sRe5wSvSNsfcpTepopDdiPz_eUvLze5AcSXZpllNmHMCx7e4mUmmUK5VGbzBJVbfOtHGB6oBxF8HZPYfvZ8nEJlEKNgbmx9zmJcYYank3eFJ45MD7Wy7MEA6VoeL");'
+                ></div>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex items-stretch justify-between gap-4 rounded-lg">
+                <div class="flex flex-col gap-1 flex-[2_2_0px]">
+                  <p class="text-[#111418] text-base font-bold leading-tight">Follow-up with Emily</p>
+                  <p class="text-[#637588] text-sm font-normal leading-normal">4:00 PM - 4:30 PM</p>
+                </div>
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg flex-1"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBziyLCzEwrmyeyDJrrjH75mRzBgRanlGXCG1PURxTQQj8yNaAo5VrLzMMW65N0CaZInn6hB16k0RslDOEZd5mFArj3pEIjeeQBA0ld6nx8rOiXCjy20QjUMSwVAPIdVzgpJRXzIVRkwgUqT1yXLKsM6UOSBh5AUYQtsTw7-gNMsJaJHivnwb2jQFchJa4MiT2wB9XI_h7HsmBbKMficxiaXpSbCOsLxNzMOxJMscq7x478v-_fE1E99fqsQhHfPTkWQeEgrwzPnpFR");'
+                ></div>
+              </div>
+            </div>
+            <div class="flex px-4 py-3 justify-start">
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]"
+              >
+                <span class="truncate">View Calendar</span>
+              </button>
+            </div>
+            <h2 class="text-[#111418] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Notifications</h2>
+            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-12" data-icon="EnvelopeOpen" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M228.44,89.34l-96-64a8,8,0,0,0-8.88,0l-96,64A8,8,0,0,0,24,96V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V96A8,8,0,0,0,228.44,89.34ZM96.72,152,40,192V111.53Zm16.37,8h29.82l56.63,40H56.46Zm46.19-8L216,111.53V192ZM128,41.61l81.91,54.61-67,47.78H113.11l-67-47.78Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">New Inquiry</p>
+                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">New client inquiry from Alex</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
+              <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-12" data-icon="Bell" data-size="24px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex flex-col justify-center">
+                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Meeting Reminder</p>
+                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Reminder for client meeting with Sarah</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM", // Reemplaza con tu config si es diferente
+            authDomain: "zetter-app.firebaseapp.com",
+            projectId: "zetter-app",
+            storageBucket: "zetter-app.appspot.com",
+            messagingSenderId: "386722095231",
+            appId: "1:386722095231:web:f5abe66895fea3746bdf4a",
+            measurementId: "G-D7E0PDYDN5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // const logoutButton = document.getElementById('logout-btn');
+        // const userProfilePicDiv = document.getElementById('user-profile-picture');
+
+        onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            window.location.href = 'index.html';
+        }
+    });
+
+    console.log("Dashboard script: Iniciando fetch de header.html");
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => {
+        console.log("Dashboard script: header.html fetched correctamente.");
+        const mainHeaderDiv = document.getElementById('main-header');
+        if (mainHeaderDiv) {
+            mainHeaderDiv.innerHTML = html;
+            console.log("Dashboard script: header.html inyectado en main-header.");
+
+            const scripts = Array.from(mainHeaderDiv.querySelectorAll('script'));
+            scripts.forEach((oldScript, index) => {
+              console.log(`Dashboard script: Procesando script ${index + 1} del header.`);
+              const newScript = document.createElement('script');
+
+              Array.from(oldScript.attributes).forEach(attr => {
+                newScript.setAttribute(attr.name, attr.value);
+              });
+
+              if (oldScript.textContent) {
+                // Usamos textContent directamente para la asignación,
+                // ya que appendChild(createTextNode(...)) no funcionó antes.
+                newScript.textContent = oldScript.textContent;
+                console.log(`Dashboard script: Contenido del script ${index + 1} del header:`, newScript.textContent);
+              } else if (oldScript.src) {
+                newScript.src = oldScript.src; // Para scripts con atributo src
+              } else {
+                console.warn(`Dashboard script: Script ${index + 1} del header no tiene src ni textContent.`);
+                oldScript.remove(); // Quitar si no hay nada que hacer
+                return;
+              }
+
+              document.body.appendChild(newScript);
+              console.log(`Dashboard script: Script ${index + 1} del header re-añadido al body.`);
+              oldScript.remove();
+            });
+        } else {
+            console.error("Dashboard script: Elemento con ID 'main-header' no encontrado.");
+        }
+      })
+      .catch(err => console.error("Dashboard script: Error al cargar o procesar header.html:", err));
+    </script>
+</body>
+</html>

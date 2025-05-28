@@ -1,0 +1,502 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
+
+    <title>Appointments - Zetteri</title>
+    <link rel="icon" type="image/x-icon" href="zetteri-favicon.png" />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  </head>
+  <body class="bg-gradient-to-br from-[#f6f8fa] to-[#e3eaf6] dark:from-[#14213d] dark:to-[#22272b]">
+    <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#f0f2f4] px-10 py-3">
+          <div class="flex items-center gap-3 text-[#111418]">
+            <div class="h-10 w-10 flex items-center justify-center">
+              <img src="zetteri-logo-nobck.png" alt="Zetteri Logo" class="h-8 w-8 object-contain" />
+            </div>
+            <h2 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">Zetteri</h2>
+          </div>
+          <div class="flex flex-1 justify-end gap-4">
+            <div class="flex items-center gap-9">
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="dashboard.html">Dashboard</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="appointments.html">Appointments</a>
+              <a class="text-[#111418] text-sm font-medium leading-normal" href="crm.html">CRM</a>
+            </div>
+            <button
+              class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#f0f2f4] text-[#111418] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
+            >
+              <div class="text-[#111418]" data-icon="Bell" data-size="20px" data-weight="regular">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                  <path
+                    d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+                  ></path>
+                </svg>
+              </div>
+            </button>
+            <div class="relative">
+              <button id="profile-dropdown-btn" class="bg-[#f0f2f4] rounded-full p-1 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-[#197fe5]">
+                <div
+                  id="user-profile-picture"
+                  class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                  style='background-image: url("https://assets.zyrosite.com/AoPqRVW0MkiDWnyz/my-notion-face-portrait-AR0MrvjwKosxVEgo.png");'
+                ></div>
+                <svg class="ml-1" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M6 9l6 6 6-6"/>
+                </svg>
+              </button>
+              <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-[#e3eaf6] z-50">
+                <ul class="py-1">
+                  <li>
+                    <a href="profile.html" class="block px-4 py-2 text-[#111418] hover:bg-[#f0f2f4] dark:hover:bg-[#c4dfe6]">Profile</a>
+                  </li>
+                  <li>
+                    <a href="settings.html" class="block px-4 py-2 text-[#111418] hover:bg-[#f0f2f4] dark:hover:bg-[#c4dfe6]">Settings</a>
+                  </li>
+                  <li>
+                    <button id="logout-btn-dropdown" class="w-full text-left px-4 py-2 text-[#d32f2f] hover:bg-[#f0f2f4] dark:hover:bg-[#c4dfe6]">Logout</button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="flex flex-wrap justify-between gap-3 p-4">
+              <p class="text-[#111418] tracking-light text-[32px] font-bold leading-tight min-w-72">Calendar</p>
+              <button id="new-appointment-btn" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal">
+                  <span class="truncate">New Appointment</span>
+              </button>
+            </div>
+            <div class="pb-3">
+              <div class="flex border-b border-[#dce0e5] px-4 gap-8">
+                
+                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-[#111418] text-[#111418] pb-[13px] pt-4" href="#">
+                  <p class="text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]">Month</p>
+                </a>
+              </div>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-6 p-4">
+              <div class="flex min-w-72 max-w-[336px] flex-1 flex-col gap-0.5">
+                <div class="flex items-center p-1 justify-between">
+                  <button id="prev-month-btn">
+                    <div class="text-[#111418] flex size-10 items-center justify-center" data-icon="CaretLeft" data-size="18px" data-weight="regular">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor" viewBox="0 0 256 256">
+                        <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path>
+                      </svg>
+                    </div>
+                  </button>
+                  <p id="current-month-year" class="text-[#111418] text-base font-bold leading-tight flex-1 text-center">May 2025</p>
+                  <button id="next-month-btn">
+                    <div class="text-[#111418] flex size-10 items-center justify-center" data-icon="CaretRight" data-size="18px" data-weight="regular">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M181.66,133.66l-80,80a8,8,0,0,1-11.32-11.32L164.69,128,90.34,53.66a8,8,0,0,1,11.32-11.32l80,80A8,8,0,0,1,181.66,133.66Z"></path>
+                        </svg>
+                    </div>
+                  </button>
+                </div>
+                <div id="calendar-days" class="grid grid-cols-7">
+                  
+                </div>
+              </div>
+            </div>  
+            <div id="daily-appointments-section" class="px-4 pt-6">
+              <h3 class="text-[#111418] text-xl font-bold leading-tight tracking-[-0.015em] pb-3">
+                Appointments for <span id="selected-date-display">Today</span>
+              </h3>
+              <div id="appointments-list" class="space-y-3">
+                
+                <div class="flex items-center gap-4 bg-white p-3 rounded-lg shadow border border-[#e3eaf6] cursor-pointer" data-appointment-id="123">
+                  <div class="text-[#111418] flex items-center justify-center rounded-lg bg-[#f0f2f4] shrink-0 size-10" data-icon="User" data-size="20px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256"><path d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8Z"></path></svg>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-[#111418] text-base font-medium leading-normal">Client Meeting with Sarah</p>
+                    <p class="text-[#637588] text-sm font-normal">10:00 AM - 11:00 AM</p>
+                    <p class="text-xs text-gray-500 mt-1">Assigned to: Dr. Smith - Notes: Discuss Q3 performance.</p>
+                  </div>
+                  
+                </div>
+                <p id="no-appointments-message" class="text-gray-500 hidden">No appointments for this day.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="appointment-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
+      <div class="relative bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-3xl mx-auto"> <!-- Ajusta max-w-xl según necesites -->
+        <!-- Botón de cierre principal del modal -->
+        <button id="close-modal-btn" class="absolute top-0 right-0 mt-3 mr-3 sm:mt-4 sm:mr-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 z-10">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <!-- Contenedor del Iframe -->
+        <div>
+            <!-- Puedes añadir un título aquí si lo deseas, por ejemplo:
+            <h3 id="actual-modal-title" class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Appointment</h3> 
+            Y luego en JS: const actualModalTitleEl = document.getElementById('actual-modal-title');
+            Y usarlo en openAppointmentModal para cambiar el título.
+            -->
+            <iframe id="appointment-modal-iframe" src="" class="w-full h-[75vh] sm:h-[80vh] border-none rounded-lg"></iframe> <!-- Ajusta h-[...] según necesites -->
+        </div>
+      </div>
+    </div>
+
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM",
+            authDomain: "zetter-app.firebaseapp.com",
+            projectId: "zetter-app",
+            storageBucket: "zetter-app.appspot.com",
+            messagingSenderId: "386722095231",
+            appId: "1:386722095231:web:f5abe66895fea3746bdf4a",
+            measurementId: "G-D7E0PDYDN5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ... (Autenticación y Dropdown de Perfil - sin cambios respecto a tu versión funcional) ...
+        const userProfilePicDiv = document.getElementById('user-profile-picture');
+        const profileDropdownBtn = document.getElementById('profile-dropdown-btn');
+        const profileDropdown = document.getElementById('profile-dropdown');
+        const logoutDropdownBtn = document.getElementById('logout-btn-dropdown');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                if (userProfilePicDiv && user.photoURL) {
+                    userProfilePicDiv.style.backgroundImage = `url('${user.photoURL}')`;
+                }
+                // Cargar citas cuando el usuario esté autenticado
+                if (document.readyState === 'complete' || document.readyState !== 'loading') {
+                    loadAppointmentsForDate(activeSelectedDate);
+                }
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        if (profileDropdownBtn && profileDropdown) {
+            profileDropdownBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                profileDropdown.classList.toggle('hidden');
+            });
+        }
+        document.addEventListener('click', (e) => {
+            if (profileDropdown && !profileDropdown.classList.contains('hidden')) {
+                if (!profileDropdownBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.add('hidden');
+                }
+            }
+        });
+
+        if (logoutDropdownBtn) {
+            logoutDropdownBtn.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Error signing out: ', error);
+                    alert('Error signing out. Please try again.');
+                }
+            });
+        }
+
+        // --- Lógica del Calendario ---
+        const currentMonthYearEl = document.getElementById('current-month-year');
+        const calendarDaysEl = document.getElementById('calendar-days');
+        const prevMonthBtn = document.getElementById('prev-month-btn');
+        const nextMonthBtn = document.getElementById('next-month-btn');
+        const selectedDateDisplayEl = document.getElementById('selected-date-display');
+        const appointmentsListEl = document.getElementById('appointments-list');
+        const noAppointmentsMessageEl = document.getElementById('no-appointments-message');
+
+        let viewDate = new Date(); 
+        let activeSelectedDate = new Date(); 
+
+        function renderCalendar() {
+            if (!calendarDaysEl || !currentMonthYearEl || !prevMonthBtn || !nextMonthBtn) {
+                console.error("Calendar elements not found.");
+                return;
+            }
+            calendarDaysEl.innerHTML = ''; 
+            const month = viewDate.getMonth();
+            const year = viewDate.getFullYear();
+
+            currentMonthYearEl.textContent = `${viewDate.toLocaleString('en-US', { month: 'long' })} ${year}`;
+
+            const firstDayOfMonthIndex = new Date(year, month, 1).getDay(); // 0 (Sun) - 6 (Sat)
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            dayNames.forEach(dayName => {
+                const dayHeader = document.createElement('p');
+                dayHeader.className = "text-center text-[#111418] dark:text-gray-300 text-[13px] font-bold leading-normal tracking-[0.015em] h-12 flex items-center justify-center pb-0.5";
+                dayHeader.textContent = dayName;
+                calendarDaysEl.appendChild(dayHeader);
+            });
+
+            for (let i = 0; i < firstDayOfMonthIndex; i++) {
+                const emptyCell = document.createElement('div');
+                calendarDaysEl.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayButton = document.createElement('button');
+                dayButton.className = "h-12 w-full text-sm font-medium leading-normal focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#197fe5] rounded-full";
+                
+                const dayDiv = document.createElement('div');
+                dayDiv.textContent = day;
+                // Base styles for the number container
+                let dayDivClasses = "flex size-full items-center justify-center rounded-full text-[#111418] dark:text-gray-200";
+
+                const dayDate = new Date(year, month, day);
+                const currentDate = new Date(); // Renamed to avoid conflict
+
+                // Apply hover for non-active days
+                if (dayDate.toDateString() !== activeSelectedDate.toDateString()) {
+                    dayDivClasses += " hover:bg-gray-200 dark:hover:bg-slate-700";
+                }
+
+                // Style for 'today'
+                if (dayDate.toDateString() === currentDate.toDateString()) {
+                    dayDivClasses += " bg-gray-300 dark:bg-slate-600 font-bold";
+                }
+                
+                // Style for 'active selected date' - overrides 'today' if they are the same
+                if (dayDate.toDateString() === activeSelectedDate.toDateString()) {
+                    dayDivClasses = "flex size-full items-center justify-center rounded-full bg-[#197fe5] text-white font-bold"; // Complete override
+                }
+                dayDiv.className = dayDivClasses;
+
+                dayButton.appendChild(dayDiv);
+                dayButton.addEventListener('click', () => {
+                    activeSelectedDate = new Date(year, month, day);
+                    updateSelectedDateDisplay();
+                    loadAppointmentsForDate(activeSelectedDate); 
+                    renderCalendar(); 
+                });
+                calendarDaysEl.appendChild(dayButton);
+            }
+        }
+        
+        function updateSelectedDateDisplay() {
+            if (selectedDateDisplayEl) {
+                const today = new Date();
+                if (activeSelectedDate.toDateString() === today.toDateString()) {
+                    selectedDateDisplayEl.textContent = "Today";
+                } else {
+                    selectedDateDisplayEl.textContent = activeSelectedDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                }
+            }
+        }
+
+        if (prevMonthBtn) {
+            prevMonthBtn.addEventListener('click', () => {
+                viewDate.setMonth(viewDate.getMonth() - 1);
+                renderCalendar();
+                loadAppointmentsForDate(activeSelectedDate); // Actualizar citas si el mes visible cambia pero el día seleccionado no
+            });
+        }
+        if (nextMonthBtn) {
+            nextMonthBtn.addEventListener('click', () => {
+                viewDate.setMonth(viewDate.getMonth() + 1);
+                renderCalendar();
+                loadAppointmentsForDate(activeSelectedDate); // Actualizar citas
+            });
+        }
+        
+         // --- Lógica para el Modal de Citas ---
+        const newAppointmentBtn = document.getElementById('new-appointment-btn');
+        // Usa este nombre consistentemente para el contenedor del modal
+        const appointmentModalContainer = document.getElementById('appointment-modal'); 
+        // Usa este nombre consistentemente para el botón de cierre
+        const closeModalBtn = document.getElementById('close-modal-btn'); 
+        const appointmentDetailsIframe = document.getElementById('appointment-modal-iframe');
+        
+        function openAppointmentModal(mode = 'new', appointmentId = null) {
+            // Usa la constante correcta aquí: appointmentModalContainer
+            if (!appointmentModalContainer || !appointmentDetailsIframe) {
+              console.error("Modal container or iframe not found for opening."); 
+              return;
+            }
+
+            let iframeSrc = 'appt-details.html';
+            if (mode === 'new') {
+                iframeSrc += `?mode=new&date=${activeSelectedDate.toISOString().split('T')[0]}`;
+            } else if (mode === 'edit' && appointmentId) {
+                iframeSrc += `?mode=edit&id=${appointmentId}`;
+            } else {
+                console.error("Invalid mode or missing appointmentId for modal.");
+                return;
+            }
+            
+            appointmentDetailsIframe.src = iframeSrc;
+            // Usa la constante correcta aquí: appointmentModalContainer
+            appointmentModalContainer.classList.remove('hidden');
+        }
+
+        function closeAppointmentModal() {
+            // Usa la constante correcta aquí: appointmentModalContainer
+            if (!appointmentModalContainer || !appointmentDetailsIframe) {
+                console.error("Modal container or iframe not found for closing.");
+                return;
+            }
+            // Usa la constante correcta aquí: appointmentModalContainer
+            appointmentModalContainer.classList.add('hidden');
+            appointmentDetailsIframe.src = 'about:blank'; 
+        }
+
+        if (newAppointmentBtn) {
+            newAppointmentBtn.addEventListener('click', () => {
+                openAppointmentModal('new');
+            });
+        }
+
+        // Usa la constante correcta aquí: closeModalBtn
+        if (closeModalBtn) { 
+          closeModalBtn.addEventListener('click', closeAppointmentModal);
+        }
+
+        if (appointmentsListEl) {
+            appointmentsListEl.addEventListener('click', (event) => {
+                const appointmentElement = event.target.closest('[data-appointment-id]');
+                if (appointmentElement) {
+                    const appointmentId = appointmentElement.dataset.appointmentId;
+                    openAppointmentModal('edit', appointmentId);
+                }
+            });
+        }
+        
+        async function loadAppointmentsForDate(dateToLoad) {
+            if (!appointmentsListEl || !noAppointmentsMessageEl || !auth.currentUser) {
+                // console.warn("Appointments list, message element, or user not available for loading appointments yet.");
+                if (auth.currentUser && (document.readyState === 'complete' || document.readyState !== 'loading')) {
+                    // If user is available and DOM is ready, but elements are missing, it's an error
+                    console.error("Required elements for appointments not found in DOM.");
+                }
+                return;
+            }
+
+            const userId = auth.currentUser.uid;
+            appointmentsListEl.innerHTML = ''; 
+            noAppointmentsMessageEl.classList.add('hidden');
+
+            const startOfDay = new Date(dateToLoad.getFullYear(), dateToLoad.getMonth(), dateToLoad.getDate());
+            const endOfDay = new Date(dateToLoad.getFullYear(), dateToLoad.getMonth(), dateToLoad.getDate() + 1);
+
+            const q = query(collection(db, "appointments"),
+                            where("professionalId", "==", userId),
+                            where("startTime", ">=", Timestamp.fromDate(startOfDay)),
+                            where("startTime", "<", Timestamp.fromDate(endOfDay)),
+                            orderBy("startTime"));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    noAppointmentsMessageEl.classList.remove('hidden');
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const appointment = doc.data();
+                        const appointmentId = doc.id;
+
+                        const item = document.createElement('div');
+                        item.className = "flex items-center gap-4 bg-white p-3 rounded-lg shadow border border-[#e3eaf6] cursor-pointer hover:shadow-md";
+                        item.setAttribute('data-appointment-id', appointmentId);
+
+                        const iconDiv = document.createElement('div');
+                        iconDiv.className = "text-[#111418] dark:text-white flex items-center justify-center rounded-lg bg-[#f0f2f4] dark:bg-slate-700 shrink-0 size-10";
+                        // Icon (ejemplo, puedes cambiarlo o hacerlo dinámico)
+                        iconDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H136v48a8,8,0,0,1-16,0V136H72a8,8,0,0,1,0-16h48V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z"></path></svg>`;
+                        
+                        const detailsDiv = document.createElement('div');
+                        detailsDiv.className = "flex-1 min-w-0"; // min-w-0 para truncar texto
+
+                        const titleP = document.createElement('p');
+                        titleP.className = "text-[#111418] text-base font-medium leading-normal truncate";
+                        titleP.textContent = appointment.title || 'Appointment'; 
+
+                        const timeP = document.createElement('p');
+                        timeP.className = "text-[#637588] text-sm font-normal";
+                        let timeString = 'No time specified';
+                        if (appointment.startTime && appointment.startTime.toDate) {
+                            timeString = appointment.startTime.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                            if (appointment.endTime && appointment.endTime.toDate) {
+                                timeString += ` - ${appointment.endTime.toDate().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`;
+                            }
+                        }
+                        timeP.textContent = timeString;
+
+                        const notesP = document.createElement('p');
+                        notesP.className = "text-xs text-gray-500 mt-1 truncate";
+                        let notesSummary = "";
+                        if(appointment.clientName) notesSummary += `Client: ${appointment.clientName}. `;
+                        if(appointment.notes) notesSummary += `Notes: ${appointment.notes}`;
+                        notesP.textContent = notesSummary || "No additional details.";
+
+
+                        detailsDiv.appendChild(titleP);
+                        detailsDiv.appendChild(timeP);
+                        detailsDiv.appendChild(notesP);
+
+                        item.appendChild(iconDiv);
+                        item.appendChild(detailsDiv);
+                        appointmentsListEl.appendChild(item);
+                    });
+                }
+            } catch (error) {
+                console.error("Error loading appointments: ", error);
+                appointmentsListEl.innerHTML = `<p class="text-red-500 dark:text-red-400">Error loading appointments. Check console for details.</p>`;
+                noAppointmentsMessageEl.classList.add('hidden');
+            }
+        }
+        
+        // --- Inicialización ---
+        document.addEventListener('DOMContentLoaded', () => {
+            if (calendarDaysEl && currentMonthYearEl && prevMonthBtn && nextMonthBtn) {
+                 renderCalendar();
+                 updateSelectedDateDisplay();
+                 if (auth.currentUser) { // Solo cargar si el usuario ya está autenticado
+                    loadAppointmentsForDate(activeSelectedDate);
+                 }
+            } else {
+                console.error("DOM not fully loaded or calendar elements missing for initial render setup.");
+            }
+        });
+
+        // Comunicación con el Iframe (appt-details.html)
+        window.addEventListener('message', (event) => {
+            // Idealmente, verifica event.origin aquí por seguridad
+            // if (event.origin !== window.location.origin) return; 
+
+            if (event.data && event.data.action) {
+                switch (event.data.action) {
+                    case 'closeModal':
+                        closeAppointmentModal();
+                        break;
+                    case 'appointmentSaved':
+                        closeAppointmentModal();
+                        loadAppointmentsForDate(activeSelectedDate); // Recarga las citas
+                        // Podrías mostrar una notificación de éxito aquí
+                        console.log("Appointment action completed, list refreshed for:", activeSelectedDate);
+                        break;
+                    // Puedes añadir más 'actions' según necesites (e.g., 'appointmentDeleted')
+                }
+            }
+        });
+    </script>
+  </body>
+</html>
