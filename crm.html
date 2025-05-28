@@ -248,10 +248,19 @@
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
-        const firebaseConfig = { /* ... tu config ... */ };
-        const app = initializeApp(firebaseConfig, "appointmentsApp"); // Nombre único para esta página
+        const firebaseConfig = {
+            apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM", // Reemplaza con tu config si es diferente
+            authDomain: "zetter-app.firebaseapp.com",
+            projectId: "zetter-app",
+            storageBucket: "zetter-app.appspot.com",
+            messagingSenderId: "386722095231",
+            appId: "1:386722095231:web:f5abe66895fea3746bdf4a",
+            measurementId: "G-D7E0PDYDN5"
+        };
+
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
         onAuthStateChanged(auth, (user) => {
