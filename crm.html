@@ -76,14 +76,10 @@
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-        import { 
-            getFirestore, collection, addDoc, getDocs, query, where, 
-            doc, getDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, onSnapshot 
-        } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM", // Asegúrate que esta sea tu config correcta
+            apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM", // Reemplaza con tu config si es diferente
             authDomain: "zetter-app.firebaseapp.com",
             projectId: "zetter-app",
             storageBucket: "zetter-app.appspot.com",
@@ -92,134 +88,120 @@
             measurementId: "G-D7E0PDYDN5"
         };
 
-        const app = initializeApp(firebaseConfig, "crmApp"); // Nombre único para la app de esta página
+        const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app); // INICIALIZA FIRESTORE DB AQUÍ
 
-        // --- Elementos del DOM para CRM ---
-        const clientListContainer = document.getElementById('client-list-container');
-        const clientDetailsContent = document.getElementById('client-details-content');
-        const addNewClientBtn = document.getElementById('add-new-client-btn');
-        const searchClientInput = document.getElementById('search-client-input');
-        let currentUserId = null; 
-        let unsubscribeClientsListener = null; // Para limpiar el listener de onSnapshot
-
-        // --- Lógica Principal de Autenticación y Carga ---
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUserId = user.uid;
-                console.log("CRM Page: User authenticated - UID:", currentUserId);
-                loadClients(); 
-                
-                if (addNewClientBtn && !addNewClientBtn.hasAttribute('data-listener-attached')) {
-                    addNewClientBtn.addEventListener('click', handleAddNewClientClick);
-                    addNewClientBtn.setAttribute('data-listener-attached', 'true');
-                }
-                if (searchClientInput && !searchClientInput.hasAttribute('data-listener-attached')) {
-                    searchClientInput.addEventListener('input', (e) => filterClients(e.target.value));
-                    searchClientInput.setAttribute('data-listener-attached', 'true');
-                }
-            } else {
-                currentUserId = null;
-                console.log("CRM Page: User not authenticated. Redirecting to login.");
-                if (unsubscribeClientsListener) {
-                    unsubscribeClientsListener(); 
-                    unsubscribeClientsListener = null;
-                }
-                if (clientListContainer) clientListContainer.innerHTML = '<p class="text-gray-500 p-4">Please log in to manage clients.</p>';
-                if (clientDetailsContent) clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Please log in.</p>';
+            if (!user) {
                 window.location.href = 'index.html';
             }
         });
 
-        // Cargar y mostrar header
         fetch('header.html')
           .then(res => {
-            if (!res.ok) throw new Error(`HTTP error! status: ${res.status} al cargar header.html`);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             return res.text();
           })
           .then(html => {
             const mainHeaderDiv = document.getElementById('main-header');
             if (mainHeaderDiv) {
                 mainHeaderDiv.innerHTML = html;
-                Array.from(mainHeaderDiv.querySelectorAll('script')).forEach(oldScript => {
+                const scripts = Array.from(mainHeaderDiv.querySelectorAll('script'));
+                scripts.forEach(oldScript => {
                   const newScript = document.createElement('script');
                   Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
                   if (oldScript.textContent) newScript.textContent = oldScript.textContent;
                   else if (oldScript.src) newScript.src = oldScript.src;
                   else { oldScript.remove(); return; }
-                  document.body.appendChild(newScript); 
+                  document.body.appendChild(newScript);
                   oldScript.remove();
                 });
-            } else { console.error("CRM page: Elemento con ID 'main-header' no encontrado."); }
-          })
-          .catch(err => console.error("CRM page: Error al cargar o procesar header.html:", err));
-        
-        // --- Funciones del CRM ---
-        async function loadClients() {
-            if (!currentUserId || !db) {
-                console.error("CRM: loadClients - currentUserId o db no disponible.");
-                return;
+            } else {
+                console.error("Appointments page: Elemento con ID 'main-header' no encontrado.");
             }
-            if (clientListContainer) clientListContainer.innerHTML = '<p class="text-gray-500 p-4">Loading clients...</p>';
+          })
+          .catch(err => console.error("Appointments page: Error al cargar o procesar header.html:", err));
+
+          // --- LÓGICA DEL CRM ---
+        const clientListContainer = document.getElementById('client-list-container');
+        const clientDetailsContent = document.getElementById('client-details-content');
+        const addNewClientBtn = document.getElementById('add-new-client-btn');
+        const searchClientInput = document.getElementById('search-client-input');
+        let currentUserId = null; // Para almacenar el UID del usuario logueado
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                loadClients(); // Cargar clientes cuando el usuario esté autenticado
+                // Aquí también puedes inicializar listeners para búsqueda, etc.
+                if(searchClientInput) {
+                    searchClientInput.addEventListener('input', (e) => {
+                        filterClients(e.target.value);
+                    });
+                }
+            } else {
+                currentUserId = null;
+                clientListContainer.innerHTML = '<p class="text-gray-500 p-4">Please log in to manage clients.</p>';
+                clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Please log in.</p>';
+            }
+        });
+        
+        // Función para cargar clientes
+        async function loadClients() {
+            if (!currentUserId) return;
+            clientListContainer.innerHTML = '<p class="text-gray-500 p-4">Loading clients...</p>'; // Indicador de carga
 
             try {
                 const clientsRef = collection(db, "users", currentUserId, "clients");
-                const q = query(clientsRef, orderBy("name"));
+                const q = query(clientsRef, orderBy("name")); // Ordenar por nombre, por ejemplo
 
-                if (unsubscribeClientsListener) unsubscribeClientsListener(); 
-
-                unsubscribeClientsListener = onSnapshot(q, (querySnapshot) => {
-                    if (!clientListContainer) return;
+                // Usar onSnapshot para actualizaciones en tiempo real
+                onSnapshot(q, (querySnapshot) => {
                     if (querySnapshot.empty) {
                         clientListContainer.innerHTML = '<p class="text-gray-500 p-4">No clients found. Add your first client!</p>';
                         return;
                     }
-                    clientListContainer.innerHTML = ''; 
-                    querySnapshot.forEach((clientDoc) => {
-                        renderClientInList(clientDoc.id, clientDoc.data());
+                    clientListContainer.innerHTML = ''; // Limpiar lista antes de repintar
+                    querySnapshot.forEach((doc) => {
+                        renderClientInList(doc.id, doc.data());
                     });
                 }, (error) => {
                     console.error("Error getting clients in real-time: ", error);
-                    if (clientListContainer) clientListContainer.innerHTML = '<p class="text-red-500 p-4">Error loading clients.</p>';
+                    clientListContainer.innerHTML = '<p class="text-red-500 p-4">Error loading clients.</p>';
                 });
 
             } catch (error) {
                 console.error("Error preparing to load clients: ", error);
-                if (clientListContainer) clientListContainer.innerHTML = '<p class="text-red-500 p-4">Error loading clients.</p>';
+                clientListContainer.innerHTML = '<p class="text-red-500 p-4">Error loading clients.</p>';
             }
         }
 
+        // Función para renderizar un cliente en la lista
         function renderClientInList(clientId, clientData) {
-            if (!clientListContainer) return;
             const clientItem = document.createElement('div');
-            clientItem.className = 'client-item flex items-center gap-4 bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 cursor-pointer px-4 py-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600';
+            clientItem.className = 'client-item flex items-center gap-4 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 cursor-pointer px-4 py-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600';
             clientItem.setAttribute('data-id', clientId);
 
-            const photoUrl = clientData.photoURL || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(clientData.name || 'N A') + '&background=random';
+            const photoUrl = clientData.photoURL || 'https://via.placeholder.com/150/cccccc/808080?Text=No+Image'; // Placeholder
             
             clientItem.innerHTML = `
-                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-10 w-10" style='background-image: url("${photoUrl}");'></div>
+                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12" style='background-image: url("${photoUrl}");'></div>
                 <div class="flex flex-col justify-center overflow-hidden">
-                    <p class="text-[#111418] dark:text-gray-200 text-sm font-medium leading-normal truncate">${clientData.name || 'N/A'}</p>
-                    <p class="text-[#637588] dark:text-gray-400 text-xs font-normal leading-normal truncate">${clientData.email || clientData.phone || 'No contact info'}</p>
+                    <p class="text-[#111418] dark:text-gray-200 text-base font-medium leading-normal truncate">${clientData.name || 'N/A'}</p>
+                    <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal truncate">${clientData.email || clientData.phone || 'No contact info'}</p>
                 </div>
             `;
             clientItem.addEventListener('click', () => loadClientDetails(clientId));
             clientListContainer.appendChild(clientItem);
         }
         
+        // Función para filtrar clientes (básica, se puede mejorar)
         function filterClients(searchTerm) {
-            if (!clientListContainer) return;
-            const term = searchTerm.toLowerCase().trim();
+            const term = searchTerm.toLowerCase();
             const clientItems = clientListContainer.querySelectorAll('.client-item');
             clientItems.forEach(item => {
-                const clientNameElement = item.querySelector('p:first-child');
-                const clientContactElement = item.querySelector('p:last-child');
-                const clientName = clientNameElement ? clientNameElement.textContent.toLowerCase() : '';
-                const clientContact = clientContactElement ? clientContactElement.textContent.toLowerCase() : '';
-
-                if (clientName.includes(term) || clientContact.includes(term)) {
+                const clientName = item.querySelector('p:first-child').textContent.toLowerCase();
+                if (clientName.includes(term)) {
                     item.style.display = 'flex';
                 } else {
                     item.style.display = 'none';
@@ -227,121 +209,93 @@
             });
         }
 
+        // Función para cargar detalles de un cliente
         async function loadClientDetails(clientId) {
-            if (!currentUserId || !db || !clientDetailsContent) return;
-            
+            if (!currentUserId) return;
+            // Marcar cliente seleccionado en la lista (opcional)
             Array.from(clientListContainer.querySelectorAll('.client-item')).forEach(item => {
-                item.classList.remove('bg-blue-100', 'dark:bg-blue-700', 'font-semibold');
+                item.classList.remove('bg-blue-100', 'dark:bg-blue-800', 'font-semibold');
                 if (item.getAttribute('data-id') === clientId) {
-                    item.classList.add('bg-blue-100', 'dark:bg-blue-700', 'font-semibold');
+                    item.classList.add('bg-blue-100', 'dark:bg-blue-800', 'font-semibold');
                 }
             });
 
-            clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Loading client details...</p>';
+            clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Loading details...</p>';
             try {
                 const clientRef = doc(db, "users", currentUserId, "clients", clientId);
                 const clientSnap = await getDoc(clientRef);
 
                 if (clientSnap.exists()) {
-                    renderClientDetails(clientId, clientSnap.data());
+                    renderClientDetails(clientSnap.data());
                 } else {
                     clientDetailsContent.innerHTML = '<p class="text-red-500 text-center py-10">Client not found.</p>';
                 }
             } catch (error) {
                 console.error("Error loading client details: ", error);
-                clientDetailsContent.innerHTML = '<p class="text-red-500 text-center py-10">Error loading client details.</p>';
+                clientDetailsContent.innerHTML = '<p class="text-red-500 text-center py-10">Error loading details.</p>';
             }
         }
-        
-        function renderClientDetails(clientId, clientData) {
-            if (!clientDetailsContent) return;
-            const clientSinceYear = clientData.createdAt && clientData.createdAt.seconds ? new Date(clientData.createdAt.seconds * 1000).getFullYear() : 'N/A';
-            
+
+        // Función para renderizar los detalles del cliente (similar a tu HTML estático)
+        function renderClientDetails(clientData) {
+            const clientSinceYear = clientData.createdAt ? new Date(clientData.createdAt.seconds * 1000).getFullYear() : 'N/A';
+            // Aquí construirías el HTML para el panel derecho, similar a tu diseño estático.
+            // Por simplicidad, solo mostraré algunos datos.
             clientDetailsContent.innerHTML = `
-                <div class="flex flex-wrap justify-between items-center gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex flex-wrap justify-between gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex min-w-72 flex-col gap-1">
                         <p class="text-[#111418] dark:text-gray-100 tracking-light text-[32px] font-bold leading-tight">${clientData.name || 'N/A'}</p>
                         <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Client since ${clientSinceYear}</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button id="edit-client-btn" class="px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Edit</button>
-                        <button id="delete-client-btn" class="px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</button>
-                    </div>
+                    <!-- Podrías añadir botones de Editar/Eliminar aquí -->
                 </div>
                 <div class="py-3">
                     <div class="flex border-b border-[#dce0e5] dark:border-gray-700 gap-8">
-                        <a class="tab-link active-tab flex cursor-pointer flex-col items-center justify-center border-b-[3px] border-b-[#111418] dark:border-b-blue-500 text-[#111418] dark:text-blue-500 pb-[13px] pt-4" data-tab="overview">
+                        <a class="tab-link active-tab flex flex-col items-center justify-center border-b-[3px] border-b-[#111418] dark:border-b-blue-500 text-[#111418] dark:text-blue-500 pb-[13px] pt-4" href="#" data-tab="overview">
                             <p class="text-sm font-bold leading-normal tracking-[0.015em]">Overview</p>
                         </a>
-                        <a class="tab-link flex cursor-pointer flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] dark:text-gray-400 pb-[13px] pt-4 hover:text-[#111418] dark:hover:text-gray-200" data-tab="appointments">
+                        <a class="tab-link flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] dark:text-gray-400 pb-[13px] pt-4 hover:text-[#111418] dark:hover:text-gray-200" href="#" data-tab="appointments">
                             <p class="text-sm font-bold leading-normal tracking-[0.015em]">Appointments</p>
                         </a>
-                        <a class="tab-link flex cursor-pointer flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] dark:text-gray-400 pb-[13px] pt-4 hover:text-[#111418] dark:hover:text-gray-200" data-tab="notes">
+                        <a class="tab-link flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] dark:text-gray-400 pb-[13px] pt-4 hover:text-[#111418] dark:hover:text-gray-200" href="#" data-tab="notes">
                             <p class="text-sm font-bold leading-normal tracking-[0.015em]">Notes</p>
                         </a>
                     </div>
                 </div>
 
                 <div id="tab-content-overview" class="tab-content block">
-                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Contact Information</h3>
-                    <div class="p-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
-                        <p class="text-[#637588] dark:text-gray-400 text-sm font-normal">Email:</p><p class="text-[#111418] dark:text-gray-200 text-sm">${clientData.email || 'N/A'}</p>
-                        <p class="text-[#637588] dark:text-gray-400 text-sm font-normal">Phone:</p><p class="text-[#111418] dark:text-gray-200 text-sm">${clientData.phone || 'N/A'}</p>
-                        <p class="text-[#637588] dark:text-gray-400 text-sm font-normal">Address:</p><p class="text-[#111418] dark:text-gray-200 text-sm">${clientData.address || 'N/A'}</p>
+                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Contact information</h3>
+                    <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                        <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] dark:border-gray-700 py-3">
+                            <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Email</p>
+                            <p class="text-[#111418] dark:text-gray-200 text-sm font-normal leading-normal">${clientData.email || 'N/A'}</p>
+                        </div>
+                        <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] dark:border-gray-700 py-3">
+                            <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Phone</p>
+                            <p class="text-[#111418] dark:text-gray-200 text-sm font-normal leading-normal">${clientData.phone || 'N/A'}</p>
+                        </div>
+                        <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] dark:border-gray-700 py-3">
+                            <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Address</p>
+                            <p class="text-[#111418] dark:text-gray-200 text-sm font-normal leading-normal">${clientData.address || 'N/A'}</p>
+                        </div>
+                        <!-- Añadir más campos si los tienes: company, notes, etc. -->
                     </div>
                 </div>
                 <div id="tab-content-appointments" class="tab-content hidden">
-                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Appointment History</h3>
-                    <div id="client-appointment-history-container" class="p-4"><p class="text-gray-500">Loading appointment history...</p></div>
+                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Appointment history</h3>
+                    <!-- Aquí iría la tabla de historial de citas, que cargarías desde otra colección o subcolección -->
+                    <p class="text-gray-500 p-4">Appointment history will be shown here.</p>
                 </div>
                 <div id="tab-content-notes" class="tab-content hidden">
                     <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Notes</h3>
-                    <div class="p-4">
-                        <textarea id="client-notes-textarea" class="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600" rows="5" placeholder="Add general notes for ${clientData.name}...">${clientData.generalNotes || ''}</textarea>
-                        <button id="save-client-note-btn" class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save Note</button>
-                    </div>
+                    <!-- Aquí iría la sección de notas -->
+                    <textarea class="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600" rows="5" placeholder="Add notes for ${clientData.name}..."></textarea>
+                    <button class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save Note</button>
                 </div>
             `;
-            setupTabs();
-            loadClientAppointmentHistory(clientId); 
-            
-            document.getElementById('save-client-note-btn')?.addEventListener('click', () => saveClientGeneralNote(clientId));
-            document.getElementById('edit-client-btn')?.addEventListener('click', () => handleEditClient(clientId, clientData));
-            document.getElementById('delete-client-btn')?.addEventListener('click', () => handleDeleteClient(clientId));
+            setupTabs(); // Configurar listeners para las pestañas
         }
         
-        async function loadClientAppointmentHistory(clientId) {
-            const container = document.getElementById('client-appointment-history-container');
-            if (!container || !currentUserId || !db) return;
-            container.innerHTML = '<p class="text-gray-500 p-4">Loading appointment history...</p>';
-
-            try {
-                const appointmentsRef = collection(db, "users", currentUserId, "appointments");
-                const q = query(appointmentsRef, where("clientId", "==", clientId), orderBy("date", "desc")); // Asume que tienes un campo 'clientId' en tus citas
-                
-                const querySnapshot = await getDocs(q);
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<p class="text-gray-500 p-4">No appointments found for this client.</p>';
-                    return;
-                }
-                
-                let html = '<ul class="space-y-3">';
-                querySnapshot.forEach(docSnap => {
-                    const appt = docSnap.data();
-                    const apptDate = appt.date && appt.date.seconds ? new Date(appt.date.seconds * 1000).toLocaleDateString() : 'Date N/A';
-                    const apptTime = appt.time || 'Time N/A';
-                    const apptService = appt.service || 'Service N/A';
-                    html += `<li class="p-3 border rounded dark:border-gray-600 bg-gray-50 dark:bg-gray-700"><strong>${apptService}</strong> on ${apptDate} at ${apptTime} <span class="text-xs px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-600">${appt.status || 'Status N/A'}</span></li>`;
-                });
-                html += '</ul>';
-                container.innerHTML = html;
-
-            } catch (error) {
-                console.error("Error loading client appointment history:", error);
-                container.innerHTML = '<p class="text-red-500 p-4">Error loading appointment history.</p>';
-            }
-        }
-
         function setupTabs() {
             const tabLinks = clientDetailsContent.querySelectorAll('.tab-link');
             const tabContents = clientDetailsContent.querySelectorAll('.tab-content');
@@ -371,91 +325,53 @@
             });
         }
 
-        function handleAddNewClientClick() {
-            // TODO: Reemplazar prompts con un modal/formulario adecuado
-            const clientName = prompt("Enter new client's name:");
-            if (clientName && currentUserId) {
-                const clientEmail = prompt("Enter client's email (optional):");
-                const clientPhone = prompt("Enter client's phone (optional):");
-                const clientAddress = prompt("Enter client's address (optional):");
-                
-                addClientToFirestore({ 
-                    name: clientName.trim(), 
-                    email: clientEmail ? clientEmail.trim() : '', 
-                    phone: clientPhone ? clientPhone.trim() : '',
-                    address: clientAddress ? clientAddress.trim() : '',
-                    generalNotes: '',
-                    createdAt: serverTimestamp()
-                });
-            }
+
+        // Lógica para el botón "Add New Client" (abrir modal o formulario)
+        if (addNewClientBtn) {
+            addNewClientBtn.addEventListener('click', () => {
+                // Aquí implementarías la lógica para mostrar un modal o un formulario para añadir un nuevo cliente.
+                // Por ahora, un simple prompt para el nombre:
+                const clientName = prompt("Enter new client's name:");
+                if (clientName && currentUserId) {
+                    const clientEmail = prompt("Enter client's email (optional):");
+                    const clientPhone = prompt("Enter client's phone (optional):");
+                    
+                    addClientToFirestore({ 
+                        name: clientName, 
+                        email: clientEmail || '', 
+                        phone: clientPhone || '',
+                        createdAt: serverTimestamp() // Firestore timestamp
+                    });
+                }
+            });
         }
-        
+
         async function addClientToFirestore(clientData) {
-            if (!currentUserId || !db) {
-                alert("Error: Not logged in or database not available.");
+            if (!currentUserId) {
+                alert("You must be logged in to add clients.");
                 return;
             }
             try {
                 const clientsRef = collection(db, "users", currentUserId, "clients");
                 const docRef = await addDoc(clientsRef, clientData);
                 console.log("Client added with ID: ", docRef.id);
-                // Opcional: Cargar detalles del nuevo cliente
-                // loadClientDetails(docRef.id);
+                // La lista se actualizará automáticamente gracias a onSnapshot
+                // Opcionalmente, podrías cargar los detalles del nuevo cliente:
+                // loadClientDetails(docRef.id); 
             } catch (e) {
                 console.error("Error adding client: ", e);
                 alert("Error adding client. See console for details.");
             }
         }
 
-        async function saveClientGeneralNote(clientId) {
-            const notesTextarea = document.getElementById('client-notes-textarea');
-            if (notesTextarea && currentUserId && db && clientId) {
-                const clientRef = doc(db, "users", currentUserId, "clients", clientId);
-                try {
-                    await updateDoc(clientRef, {
-                        generalNotes: notesTextarea.value
-                    });
-                    alert("Client note saved!");
-                } catch (error) {
-                    console.error("Error saving client note:", error);
-                    alert("Error saving client note.");
-                }
-            } else {
-                alert("Error: Could not save note. Missing information.");
-            }
-        }
-
-        function handleEditClient(clientId, clientData) {
-            // TODO: Implementar un modal/formulario para editar, pre-llenado con clientData
-            alert(`EDITING: ${clientData.name} (ID: ${clientId}). \nReplace this alert with a modal/form for editing.`);
-            // Ejemplo de cómo podrías actualizar después de que el modal/formulario se envíe:
-            // const newName = prompt("Enter new name:", clientData.name);
-            // if (newName && currentUserId && db) {
-            //   const clientRef = doc(db, "users", currentUserId, "clients", clientId);
-            //   try {
-            //     await updateDoc(clientRef, { name: newName.trim() });
-            //     console.log("Client updated");
-            //     // No es necesario llamar a loadClientDetails si onSnapshot está activo para la lista
-            //     // y si los detalles se actualizan directamente o se recargan.
-            //     // Para actualizar la vista de detalles inmediatamente:
-            //     loadClientDetails(clientId); 
-            //   } catch (e) { console.error("Error updating client", e); }
-            // }
-        }
-
-        async function handleDeleteClient(clientId) {
-            if (!currentUserId || !db) return;
-            if (confirm("Are you sure you want to delete this client and all related data? This action cannot be undone.")) {
-                try {
-                    // TODO: Considerar eliminar datos relacionados (citas, etc.) o archivarlos.
-                    const clientRef = doc(db, "users", currentUserId, "clients", clientId);
-                    await deleteDoc(clientRef);
-                    console.log("Client deleted:", clientId);
-                    if (clientDetailsContent) clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Client deleted. Select another client from the list.</p>';
-                } catch (error) {
-                    console.error("Error deleting client:", error);
-                    alert("Error deleting client.");
-                }
+        // Inicializar la carga de clientes si el usuario ya está logueado al cargar la página
+        if (auth.currentUser) {
+            currentUserId = auth.currentUser.uid;
+            loadClients();
+             if(searchClientInput) {
+                searchClientInput.addEventListener('input', (e) => {
+                    filterClients(e.target.value);
+                });
             }
         }
     </script>
