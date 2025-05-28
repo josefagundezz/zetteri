@@ -74,6 +74,34 @@
             </div>
         </div>
     </div>
+    <div id="add-client-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
+     <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+      <h2 class="text-xl font-bold mb-4 text-[#111418]">Add New Client</h2>
+      <form id="add-client-form" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-[#111418] mb-1">Name<span class="text-red-500">*</span></label>
+        <input type="text" id="client-name" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-[#111418] mb-1">Email</label>
+        <input type="email" id="client-email" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-[#111418] mb-1">Phone</label>
+        <input type="text" id="client-phone" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-[#111418] mb-1">Address</label>
+        <input type="text" id="client-address" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button type="button" id="cancel-add-client" class="px-4 py-2 rounded bg-gray-200 text-[#111418] hover:bg-gray-300">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded bg-[#197fe5] text-white hover:bg-[#1365b7]">Add</button>
+       </div>
+      </form>
+     </div>
+    </div>
+    <div id="app-notification" class="fixed top-6 right-6 z-50 hidden min-w-[220px] max-w-xs px-4 py-3 rounded-lg shadow-lg bg-[#197fe5] text-white text-base font-medium transition-opacity duration-300"></div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
@@ -327,28 +355,9 @@
 
 
         // Lógica para el botón "Add New Client" (abrir modal o formulario)
-        if (addNewClientBtn) {
-            addNewClientBtn.addEventListener('click', () => {
-                // Aquí implementarías la lógica para mostrar un modal o un formulario para añadir un nuevo cliente.
-                // Por ahora, un simple prompt para el nombre:
-                const clientName = prompt("Enter new client's name:");
-                if (clientName && currentUserId) {
-                    const clientEmail = prompt("Enter client's email (optional):");
-                    const clientPhone = prompt("Enter client's phone (optional):");
-                    
-                    addClientToFirestore({ 
-                        name: clientName, 
-                        email: clientEmail || '', 
-                        phone: clientPhone || '',
-                        createdAt: serverTimestamp() // Firestore timestamp
-                    });
-                }
-            });
-        }
-
+        
         async function addClientToFirestore(clientData) {
             if (!currentUserId) {
-                alert("You must be logged in to add clients.");
                 return;
             }
             try {
@@ -360,7 +369,6 @@
                 // loadClientDetails(docRef.id); 
             } catch (e) {
                 console.error("Error adding client: ", e);
-                alert("Error adding client. See console for details.");
             }
         }
 
@@ -374,6 +382,69 @@
                 });
             }
         }
+        const addClientModal = document.getElementById('add-client-modal');
+const addClientForm = document.getElementById('add-client-form');
+const cancelAddClientBtn = document.getElementById('cancel-add-client');
+const addNewClientBtnRef = document.getElementById('add-new-client-btn');
+
+if (addNewClientBtnRef) {
+    addNewClientBtnRef.addEventListener('click', () => {
+        addClientModal.classList.remove('hidden');
+    });
+}
+if (cancelAddClientBtn) {
+    cancelAddClientBtn.addEventListener('click', () => {
+        addClientModal.classList.add('hidden');
+        addClientForm.reset();
+    });
+}
+
+// Guardar cliente desde el modal
+if (addClientForm) {
+    addClientForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('client-name').value.trim();
+        const email = document.getElementById('client-email').value.trim();
+        const phone = document.getElementById('client-phone').value.trim();
+        const address = document.getElementById('client-address').value.trim();
+
+        if (!name) {
+            showNotification("Name is required.", "error");
+            return;
+        }
+
+        try {
+            await addClientToFirestore({
+                name,
+                email,
+                phone,
+                address,
+                createdAt: serverTimestamp()
+            });
+            showNotification("Client added!", "success");
+            addClientModal.classList.add('hidden');
+            addClientForm.reset();
+        } catch (e) {
+            showNotification("Error adding client.", "error");
+            console.error(e);
+        }
+    });
+}
+function showNotification(message, type = "info", duration = 3000) {
+    const notif = document.getElementById('app-notification');
+    if (!notif) return;
+    notif.textContent = message;
+    notif.className = "fixed top-6 right-6 z-50 min-w-[220px] max-w-xs px-4 py-3 rounded-lg shadow-lg text-base font-medium transition-opacity duration-300";
+    if (type === "success") notif.classList.add("bg-green-500");
+    else if (type === "error") notif.classList.add("bg-red-500");
+    else notif.classList.add("bg-[#197fe5]");
+    notif.classList.remove("hidden");
+    notif.style.opacity = "1";
+    setTimeout(() => {
+        notif.style.opacity = "0";
+        setTimeout(() => notif.classList.add("hidden"), 300);
+    }, duration);
+}
     </script>
   </body>
 </html>
