@@ -52,7 +52,8 @@
 </header>
 
 <script type="module">
-  // Script para manejar el dropdown del perfil
+  console.log("--- HEADER SCRIPT EJECUTADO ---");
+  
   const profileDropdownBtn = document.getElementById('profile-dropdown-btn');
   const profileDropdown = document.getElementById('profile-dropdown');
   
@@ -62,7 +63,6 @@
   if (profileDropdownBtn && profileDropdown) {
     console.log("--- HEADER SCRIPT: Ambos elementos encontrados, añadiendo listener ---");
     profileDropdownBtn.addEventListener('click', (e) => {
-      alert('Botón del dropdown CLICADO!');
       e.stopPropagation();
       profileDropdown.classList.toggle('hidden');
       console.log("Dropdown toggled. Hidden class:", profileDropdown.classList.contains('hidden'));
