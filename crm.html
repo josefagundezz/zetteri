@@ -121,6 +121,260 @@
             }
           })
           .catch(err => console.error("Appointments page: Error al cargar o procesar header.html:", err));
+
+          // --- LÓGICA DEL CRM ---
+        const clientListContainer = document.getElementById('client-list-container');
+        const clientDetailsContent = document.getElementById('client-details-content');
+        const addNewClientBtn = document.getElementById('add-new-client-btn');
+        const searchClientInput = document.getElementById('search-client-input');
+        let currentUserId = null; // Para almacenar el UID del usuario logueado
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                loadClients(); // Cargar clientes cuando el usuario esté autenticado
+                // Aquí también puedes inicializar listeners para búsqueda, etc.
+                if(searchClientInput) {
+                    searchClientInput.addEventListener('input', (e) => {
+                        filterClients(e.target.value);
+                    });
+                }
+            } else {
+                currentUserId = null;
+                clientListContainer.innerHTML = '<p class="text-gray-500 p-4">Please log in to manage clients.</p>';
+                clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Please log in.</p>';
+            }
+        });
+        
+        // Función para cargar clientes
+        async function loadClients() {
+            if (!currentUserId) return;
+            clientListContainer.innerHTML = '<p class="text-gray-500 p-4">Loading clients...</p>'; // Indicador de carga
+
+            try {
+                const clientsRef = collection(db, "users", currentUserId, "clients");
+                const q = query(clientsRef, orderBy("name")); // Ordenar por nombre, por ejemplo
+
+                // Usar onSnapshot para actualizaciones en tiempo real
+                onSnapshot(q, (querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        clientListContainer.innerHTML = '<p class="text-gray-500 p-4">No clients found. Add your first client!</p>';
+                        return;
+                    }
+                    clientListContainer.innerHTML = ''; // Limpiar lista antes de repintar
+                    querySnapshot.forEach((doc) => {
+                        renderClientInList(doc.id, doc.data());
+                    });
+                }, (error) => {
+                    console.error("Error getting clients in real-time: ", error);
+                    clientListContainer.innerHTML = '<p class="text-red-500 p-4">Error loading clients.</p>';
+                });
+
+            } catch (error) {
+                console.error("Error preparing to load clients: ", error);
+                clientListContainer.innerHTML = '<p class="text-red-500 p-4">Error loading clients.</p>';
+            }
+        }
+
+        // Función para renderizar un cliente en la lista
+        function renderClientInList(clientId, clientData) {
+            const clientItem = document.createElement('div');
+            clientItem.className = 'client-item flex items-center gap-4 bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 cursor-pointer px-4 py-3 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600';
+            clientItem.setAttribute('data-id', clientId);
+
+            const photoUrl = clientData.photoURL || 'https://via.placeholder.com/150/cccccc/808080?Text=No+Image'; // Placeholder
+            
+            clientItem.innerHTML = `
+                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12" style='background-image: url("${photoUrl}");'></div>
+                <div class="flex flex-col justify-center overflow-hidden">
+                    <p class="text-[#111418] dark:text-gray-200 text-base font-medium leading-normal truncate">${clientData.name || 'N/A'}</p>
+                    <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal truncate">${clientData.email || clientData.phone || 'No contact info'}</p>
+                </div>
+            `;
+            clientItem.addEventListener('click', () => loadClientDetails(clientId));
+            clientListContainer.appendChild(clientItem);
+        }
+        
+        // Función para filtrar clientes (básica, se puede mejorar)
+        function filterClients(searchTerm) {
+            const term = searchTerm.toLowerCase();
+            const clientItems = clientListContainer.querySelectorAll('.client-item');
+            clientItems.forEach(item => {
+                const clientName = item.querySelector('p:first-child').textContent.toLowerCase();
+                if (clientName.includes(term)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Función para cargar detalles de un cliente
+        async function loadClientDetails(clientId) {
+            if (!currentUserId) return;
+            // Marcar cliente seleccionado en la lista (opcional)
+            Array.from(clientListContainer.querySelectorAll('.client-item')).forEach(item => {
+                item.classList.remove('bg-blue-100', 'dark:bg-blue-800', 'font-semibold');
+                if (item.getAttribute('data-id') === clientId) {
+                    item.classList.add('bg-blue-100', 'dark:bg-blue-800', 'font-semibold');
+                }
+            });
+
+            clientDetailsContent.innerHTML = '<p class="text-gray-500 text-center py-10">Loading details...</p>';
+            try {
+                const clientRef = doc(db, "users", currentUserId, "clients", clientId);
+                const clientSnap = await getDoc(clientRef);
+
+                if (clientSnap.exists()) {
+                    renderClientDetails(clientSnap.data());
+                } else {
+                    clientDetailsContent.innerHTML = '<p class="text-red-500 text-center py-10">Client not found.</p>';
+                }
+            } catch (error) {
+                console.error("Error loading client details: ", error);
+                clientDetailsContent.innerHTML = '<p class="text-red-500 text-center py-10">Error loading details.</p>';
+            }
+        }
+
+        // Función para renderizar los detalles del cliente (similar a tu HTML estático)
+        function renderClientDetails(clientData) {
+            const clientSinceYear = clientData.createdAt ? new Date(clientData.createdAt.seconds * 1000).getFullYear() : 'N/A';
+            // Aquí construirías el HTML para el panel derecho, similar a tu diseño estático.
+            // Por simplicidad, solo mostraré algunos datos.
+            clientDetailsContent.innerHTML = `
+                <div class="flex flex-wrap justify-between gap-3 pb-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex min-w-72 flex-col gap-1">
+                        <p class="text-[#111418] dark:text-gray-100 tracking-light text-[32px] font-bold leading-tight">${clientData.name || 'N/A'}</p>
+                        <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Client since ${clientSinceYear}</p>
+                    </div>
+                    <!-- Podrías añadir botones de Editar/Eliminar aquí -->
+                </div>
+                <div class="py-3">
+                    <div class="flex border-b border-[#dce0e5] dark:border-gray-700 gap-8">
+                        <a class="tab-link active-tab flex flex-col items-center justify-center border-b-[3px] border-b-[#111418] dark:border-b-blue-500 text-[#111418] dark:text-blue-500 pb-[13px] pt-4" href="#" data-tab="overview">
+                            <p class="text-sm font-bold leading-normal tracking-[0.015em]">Overview</p>
+                        </a>
+                        <a class="tab-link flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] dark:text-gray-400 pb-[13px] pt-4 hover:text-[#111418] dark:hover:text-gray-200" href="#" data-tab="appointments">
+                            <p class="text-sm font-bold leading-normal tracking-[0.015em]">Appointments</p>
+                        </a>
+                        <a class="tab-link flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] dark:text-gray-400 pb-[13px] pt-4 hover:text-[#111418] dark:hover:text-gray-200" href="#" data-tab="notes">
+                            <p class="text-sm font-bold leading-normal tracking-[0.015em]">Notes</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="tab-content-overview" class="tab-content block">
+                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Contact information</h3>
+                    <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
+                        <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] dark:border-gray-700 py-3">
+                            <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Email</p>
+                            <p class="text-[#111418] dark:text-gray-200 text-sm font-normal leading-normal">${clientData.email || 'N/A'}</p>
+                        </div>
+                        <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] dark:border-gray-700 py-3">
+                            <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Phone</p>
+                            <p class="text-[#111418] dark:text-gray-200 text-sm font-normal leading-normal">${clientData.phone || 'N/A'}</p>
+                        </div>
+                        <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] dark:border-gray-700 py-3">
+                            <p class="text-[#637588] dark:text-gray-400 text-sm font-normal leading-normal">Address</p>
+                            <p class="text-[#111418] dark:text-gray-200 text-sm font-normal leading-normal">${clientData.address || 'N/A'}</p>
+                        </div>
+                        <!-- Añadir más campos si los tienes: company, notes, etc. -->
+                    </div>
+                </div>
+                <div id="tab-content-appointments" class="tab-content hidden">
+                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Appointment history</h3>
+                    <!-- Aquí iría la tabla de historial de citas, que cargarías desde otra colección o subcolección -->
+                    <p class="text-gray-500 p-4">Appointment history will be shown here.</p>
+                </div>
+                <div id="tab-content-notes" class="tab-content hidden">
+                    <h3 class="text-[#111418] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Notes</h3>
+                    <!-- Aquí iría la sección de notas -->
+                    <textarea class="w-full p-2 border rounded dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600" rows="5" placeholder="Add notes for ${clientData.name}..."></textarea>
+                    <button class="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Save Note</button>
+                </div>
+            `;
+            setupTabs(); // Configurar listeners para las pestañas
+        }
+        
+        function setupTabs() {
+            const tabLinks = clientDetailsContent.querySelectorAll('.tab-link');
+            const tabContents = clientDetailsContent.querySelectorAll('.tab-content');
+
+            tabLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabName = link.getAttribute('data-tab');
+
+                    tabLinks.forEach(l => {
+                        l.classList.remove('active-tab', 'border-b-[#111418]', 'dark:border-b-blue-500', 'text-[#111418]', 'dark:text-blue-500');
+                        l.classList.add('border-b-transparent', 'text-[#637588]', 'dark:text-gray-400');
+                    });
+                    link.classList.add('active-tab', 'border-b-[#111418]', 'dark:border-b-blue-500', 'text-[#111418]', 'dark:text-blue-500');
+                    link.classList.remove('border-b-transparent', 'text-[#637588]', 'dark:text-gray-400');
+                    
+                    tabContents.forEach(content => {
+                        if (content.id === `tab-content-${tabName}`) {
+                            content.classList.remove('hidden');
+                            content.classList.add('block');
+                        } else {
+                            content.classList.remove('block');
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+        }
+
+
+        // Lógica para el botón "Add New Client" (abrir modal o formulario)
+        if (addNewClientBtn) {
+            addNewClientBtn.addEventListener('click', () => {
+                // Aquí implementarías la lógica para mostrar un modal o un formulario para añadir un nuevo cliente.
+                // Por ahora, un simple prompt para el nombre:
+                const clientName = prompt("Enter new client's name:");
+                if (clientName && currentUserId) {
+                    const clientEmail = prompt("Enter client's email (optional):");
+                    const clientPhone = prompt("Enter client's phone (optional):");
+                    
+                    addClientToFirestore({ 
+                        name: clientName, 
+                        email: clientEmail || '', 
+                        phone: clientPhone || '',
+                        createdAt: serverTimestamp() // Firestore timestamp
+                    });
+                }
+            });
+        }
+
+        async function addClientToFirestore(clientData) {
+            if (!currentUserId) {
+                alert("You must be logged in to add clients.");
+                return;
+            }
+            try {
+                const clientsRef = collection(db, "users", currentUserId, "clients");
+                const docRef = await addDoc(clientsRef, clientData);
+                console.log("Client added with ID: ", docRef.id);
+                // La lista se actualizará automáticamente gracias a onSnapshot
+                // Opcionalmente, podrías cargar los detalles del nuevo cliente:
+                // loadClientDetails(docRef.id); 
+            } catch (e) {
+                console.error("Error adding client: ", e);
+                alert("Error adding client. See console for details.");
+            }
+        }
+
+        // Inicializar la carga de clientes si el usuario ya está logueado al cargar la página
+        if (auth.currentUser) {
+            currentUserId = auth.currentUser.uid;
+            loadClients();
+             if(searchClientInput) {
+                searchClientInput.addEventListener('input', (e) => {
+                    filterClients(e.target.value);
+                });
+            }
+        }
+
     </script>
   </body>
 </html>
