@@ -10,241 +10,69 @@
 
     <title>CRM - Zetteri</title>
     <link rel="icon" type="image/x-icon" href="zetteri-favicon.png" />
-
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  </head>
-  <body class="bg-gradient-to-br from-[#f6f8fa] to-[#e3eaf6] dark:from-[#14213d] dark:to-[#22272b]">
+</head>
+<body class="bg-gradient-to-br from-[#f6f8fa] to-[#e3eaf6] dark:from-[#14213d] dark:to-[#22272b]">
     <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
-      <div class="layout-container flex h-full grow flex-col">
         <div id="main-header">
-    <!-- El header se cargará aquí -->
+            <!-- El header se cargará aquí -->
         </div>
-        <div class="gap-1 px-6 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col w-80">
-            <div class="px-4 py-3">
-              <label class="flex flex-col min-w-40 h-12 w-full">
-                <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
-                  <div
-                    class="text-[#637588] flex border-none bg-[#f0f2f4] items-center justify-center pl-4 rounded-l-lg border-r-0"
-                    data-icon="MagnifyingGlass"
-                    data-size="24px"
-                    data-weight="regular"
-                  >
-                    <img src="zetteri-logo-nobck.png" alt Zetteri Logo class="h-8 w-8 object-contain" />
-                  </div>
-                  <input
-                    placeholder="Search clients"
-                    class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#f0f2f4] focus:border-none h-full placeholder:text-[#637588] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
-                    value=""
-                  />
+
+        <!-- Contenedor Principal del CRM -->
+        <div class="flex flex-1 px-6 py-5 gap-6">
+            <!-- Panel Izquierdo: Lista de Clientes -->
+            <div id="client-list-panel" class="w-1/3 lg:w-1/4 bg-transparent flex flex-col space-y-4">
+                <!-- Barra de Búsqueda -->
+                <div class="px-1">
+                    <label class="flex flex-col min-w-40 h-12 w-full">
+                        <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+                            <div class="text-[#637588] flex border-none bg-[#f0f2f4] items-center justify-center pl-4 rounded-l-lg border-r-0" data-icon="MagnifyingGlass" data-size="24px" data-weight="regular">
+                                <!-- Reemplazar con un SVG de lupa real -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+                            </div>
+                            <input
+                                id="search-client-input"
+                                placeholder="Search clients"
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-lg text-[#111418] focus:outline-0 focus:ring-0 border-none bg-[#f0f2f4] focus:border-none h-full placeholder:text-[#637588] px-4 text-base font-normal leading-normal"
+                                value=""
+                            />
+                        </div>
+                    </label>
                 </div>
-              </label>
+
+                <!-- Título y Botón de Añadir Cliente -->
+                <div class="flex justify-between items-center px-1 pt-2">
+                    <h3 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em]">Client Management</h3>
+                    <button id="add-new-client-btn" class="flex items-center justify-center rounded-lg h-8 px-3 bg-[#197fe5] text-white text-sm font-medium hover:bg-[#1365b7]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
+                        Add Client
+                    </button>
+                </div>
+
+                <!-- Lista de Clientes (se llenará dinámicamente) -->
+                <div id="client-list-container" class="overflow-y-auto flex-1 space-y-2 pr-2">
+                    <!-- Ejemplo de item de cliente (se generará con JS) -->
+                    <!--
+                    <div class="client-item flex items-center gap-4 bg-white hover:bg-gray-50 cursor-pointer px-4 py-3 rounded-lg shadow">
+                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-12 w-12" style='background-image: url("URL_FOTO_CLIENTE");'></div>
+                        <div class="flex flex-col justify-center">
+                            <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Nombre Cliente</p>
+                            <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Info breve (ej. email o última cita)</p>
+                        </div>
+                    </div>
+                    -->
+                </div>
             </div>
-            <h3 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Client Management</h3>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCCLU9g1fWjk8ksevOjoQwZHTVP88zYe63ESYdFBtcnWAQSDrgEgDc0zHu0zZTToclf2od-FRIRIT2GOyy1H0YNWeRSrdk3YgOoMAgD6UA6kNDqHIk2BxyTuVyXK0dELwJgY5hIPleIY9gqr66vyt-agDxVaPZChCgP9a3uXw4AXm9zrLse4tXbHregFBvaGjN3iBRljT9V_Z32YhYjZ7S29tw7RPRMGgwns5VCN-nQHbW62NHdVGWAW7CnoCl1fq61TH1wqLBSwL8E");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Sophia Clark</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 2 weeks ago</p>
-              </div>
+
+            <!-- Panel Derecho: Detalles del Cliente -->
+            <div id="client-details-panel" class="w-2/3 lg:w-3/4 bg-transparent flex flex-col p-4 rounded-lg border border-gray-200 shadow-sm">
+                <!-- Este panel se llenará cuando se seleccione un cliente -->
+                <div id="client-details-content" class="flex-1">
+                    <p class="text-gray-500 text-center py-10">Select a client to see their details.</p>
+                    <!-- Aquí iría la estructura de Sophia Clark cuando un cliente esté seleccionado -->
+                </div>
             </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAwTjBZ0c4_6HnRWT_82MTnsXnFEygrtVL8_dLRNyMLztp1aoMaEUpC48PWIo9QjRDylT_cwznx9D9Z2tDo2GcLf0AE9x7H6eKUUIutD0HQl1DyfE2ihK0xEpShisWOLpJ9Dn9N3yfTbO0jwOtQVIjIAvnNo_TS1OU0K1FLKCMDZ7HT2mCG3IWEMKHIG0fIJxdlRqRgMW_BGe8U_29hsJBYs8QGzDwo-mzUChS-xImpPAPqd8V9IbJElgsaxe3Lfyt4xabIFnZxJjv8");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Ethan Bennett</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 1 week ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuACsWFLVX1yrH51-IjBUBvqbv53vXsPpPaq186HY2TNO6k64wtdUfrbE2IXhnnFC-YKx6uTj2cuzYA2bUdvcBn2GRJ_3wRVt07WwSf37T0krJlFUHjkelHuEHhtxToYVYnZ-AqycCEoYMxOCUZSTSjQSoNO3ko9A_wL8oQ9QFEi5FkXYF5_iZX3dL6pcAsGoEDtB5tlpRewakByMLu857MIq0wQCuKOkOLC85YA1qVf1DqCq_Bx2ykNvPumIGY5IK7IjbO5rmTTTBZH");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Olivia Harper</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 3 weeks ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjVwk2WxMQOchTndhl8QWU7daVRI0f50yO29UlldyJXtmp4DMBMnGfs1kS7kAchRGmxhKGl_5yuTeGCa_-7xgXvVThTOFMJf-wTewQosPaPOmhaKGMOPu2UNlxJLO9yau3-HNW93HuX8b2cVq6bjWPD3r5A0mQGDdfxJCRUp87Y56u_qL8hahAZCr3tB7wRV2u_fsZmJsJpskksseeHGZEcX-kgVBdnwiA8B-wMoeMuDpvhC6OYSYnGEvcARP08C6BFhSK-9uiCjWl");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Liam Foster</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 1 week ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAP7eF-3QY5p9QB-RE2aC2clzhYD1rExP5hci_DfEKwvWzW-dSk3GUB6t78KiPNtYEfmyfJzhNRO780ofUmqNB7WRz7b5IJx7hRk5bQq1oK0E7VWbB9o8O-1pLQj4y_wVW51tADrbNE024NxzAinRMEWeSrlNPExtEfBJDneFtjoPCjrUv_foDBqJolUSCQ6ldCz2BiNrNrWJ0MG4g1IJeYOfVkKUl8STMJR3g6yqyrduxzvnm1WGDZnzZL_EqSk3G2OmB8iS4OmYp3");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Ava Morgan</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 2 weeks ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwGF2ksjnrHZWzjg1zCby7brh80pGIS0F8KgyEHYN9JMXQys3pWM5UFb750DW-uyCJup4arGR87RXbfOogRdLFV7HC-nC6wPCQ78HrnBwfv-78b6I7q91op_thtS6YVIEr94lfcg4f8Tfz2vQPz2Q2YRHOuVHG01fvu2JIYr3ZDrnc6FtyNjIoUMJjS3K0jL2nVOa1flwNa9EzPoJE6LfA7kl3cRyAWYkSTysYc0XArPOldHbNpXSsrAo19ireHfgBVJeld-EjV27d");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Noah Carter</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 3 weeks ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBGUtMib4LuyB7xVJ7S3Hu0LTznhikmBYoC8-MVPncrWoK3G2xw7yItKo73BaPJ_PSTw3PKSyLfvmBPmPK8M3Y_MG7-1e_d7Zx3qT3d-FOth9W9okPhk4Cw-kwFr7xNwlaplKD-RFP5kjZ3lUP4xUmUWTnbJFIdTp9h2HR_3_uADeGZd021DdzqGrrOPR_rBv_ApwhFVU8xVT2kkRoAo8uFAJiFRHwsX_zKndLvvHcVkKpAs2juhBNk-4A88E3w5CjFvFzQ9nDq5H1-");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Isabella Reed</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 1 week ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLdjYZISGegYU08vXfIuDYbcG1fwwqFEcrZGonS3lkBpF6rEvWon59QHgzNmN-yiuMNP2rQJ_s0IRAq3zeeFqJUVcnks1zIPEaOyYv3qjrTozMzPbiFFChzx1eq_qyCU37EMo98Q-E53n2ba4XHrhsoRL7IbLJJ84bqn0dQk18umlfiqFZw2maziZJoWqP7Uw3T3rz6fsqSTJYP8pN87B6hn__Jqy5DLOx96MmtedBOj-uIAFbJDREAmjha6yUi8U1QW_W4BUl1BDq");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Jackson Hayes</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 2 weeks ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuADyywEja_MY-QNctnAKa1c0vsPF_8WvVjrJZy3gQo8eLDLTkn_7P4IdbC5qqMW69L4cG9h-oOw78Wt4c6V1YuhcPolsn1X4SaZnAPzauf6EZqcqBRQMcjRsABrWq3XlLtRCAyuqmGr8sUHaV8bPazKZ6_0ZQFxcrOLiC1MlTA5JJCKPhHeK4gYEOeDZTCXS4jQdiO8hGYViPNBgBPJ3VUWyh70wMDOBPPF1CMuUNFOR51aIMqDWIPpQja8eK_XQogKzusxqIlCGgYU");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Mia Bennett</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 3 weeks ago</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-4 bg-white px-4 min-h-[72px] py-2">
-              <div
-                class="bg-center bg-no-repeat aspect-square bg-cover rounded-full h-14 w-fit"
-                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB2Zz494X5u0g3napyCdpm9Wjh7KrRLw-UJxw3zz4SW2Sg3T2D04LT9-CHPlhyJIOF18FBjPKf9LdOR2vpsTMX2gwiZKcl-f4fQNRDQoQ1Uf0KidMWShxQkog8sEx0hs8wym4-NtZz9S42hPGXsuIqi-P6FRdimp0BWWhQM4C12mzrJy1drG20N42gare3a_aMcOdzzHM2N9FJsCBYWIQbPH81WD3-0phRHXqkcHi6bWQYuvtWz9Bj9x53GwkaKGFnBqS77b4w2OWpD");'
-              ></div>
-              <div class="flex flex-col justify-center">
-                <p class="text-[#111418] text-base font-medium leading-normal line-clamp-1">Lucas Parker</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal line-clamp-2">Last appointment: 1 week ago</p>
-              </div>
-            </div>
-          </div>
-          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-            <div class="flex flex-wrap justify-between gap-3 p-4">
-              <div class="flex min-w-72 flex-col gap-3">
-                <p class="text-[#111418] tracking-light text-[32px] font-bold leading-tight">Sophia Clark</p>
-                <p class="text-[#637588] text-sm font-normal leading-normal">Client since 2022</p>
-              </div>
-            </div>
-            <div class="pb-3">
-              <div class="flex border-b border-[#dce0e5] px-4 gap-8">
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-[#111418] text-[#111418] pb-[13px] pt-4" href="#">
-                  <p class="text-[#111418] text-sm font-bold leading-normal tracking-[0.015em]">Overview</p>
-                </a>
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] pb-[13px] pt-4" href="#">
-                  <p class="text-[#637588] text-sm font-bold leading-normal tracking-[0.015em]">Appointments</p>
-                </a>
-                <a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#637588] pb-[13px] pt-4" href="#">
-                  <p class="text-[#637588] text-sm font-bold leading-normal tracking-[0.015em]">Notes</p>
-                </a>
-              </div>
-            </div>
-            <h3 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Contact information</h3>
-            <div class="p-4 grid grid-cols-[20%_1fr] gap-x-6">
-              <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] py-5">
-                <p class="text-[#637588] text-sm font-normal leading-normal">Email</p>
-                <p class="text-[#111418] text-sm font-normal leading-normal">sophia.clark@email.com</p>
-              </div>
-              <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] py-5">
-                <p class="text-[#637588] text-sm font-normal leading-normal">Phone</p>
-                <p class="text-[#111418] text-sm font-normal leading-normal">(555) 123-4567</p>
-              </div>
-              <div class="col-span-2 grid grid-cols-subgrid border-t border-t-[#dce0e5] py-5">
-                <p class="text-[#637588] text-sm font-normal leading-normal">Address</p>
-                <p class="text-[#111418] text-sm font-normal leading-normal">123 Maple Street, Anytown, USA</p>
-              </div>
-            </div>
-            <h3 class="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Appointment history</h3>
-            <div class="px-4 py-3 @container">
-              <div class="flex overflow-hidden rounded-lg border border-[#dce0e5] bg-white">
-                <table class="flex-1">
-                  <thead>
-                    <tr class="bg-white">
-                      <th class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-120 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">Date</th>
-                      <th class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-240 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">Time</th>
-                      <th class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-360 px-4 py-3 text-left text-[#111418] w-[400px] text-sm font-medium leading-normal">Service</th>
-                      <th class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-480 px-4 py-3 text-left text-[#111418] w-60 text-sm font-medium leading-normal">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="border-t border-t-[#dce0e5]">
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                        07/15/2024
-                      </td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">10:00 AM</td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">Haircut</td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
-                        <button
-                          class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full"
-                        >
-                          <span class="truncate">Completed</span>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr class="border-t border-t-[#dce0e5]">
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                        06/15/2024
-                      </td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">10:00 AM</td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">Haircut</td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
-                        <button
-                          class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full"
-                        >
-                          <span class="truncate">Completed</span>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr class="border-t border-t-[#dce0e5]">
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-120 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">
-                        05/15/2024
-                      </td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-240 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">10:00 AM</td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-360 h-[72px] px-4 py-2 w-[400px] text-[#637588] text-sm font-normal leading-normal">Haircut</td>
-                      <td class="table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-480 h-[72px] px-4 py-2 w-60 text-sm font-normal leading-normal">
-                        <button
-                          class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-8 px-4 bg-[#f0f2f4] text-[#111418] text-sm font-medium leading-normal w-full"
-                        >
-                          <span class="truncate">Completed</span>
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <style>
-                @container(max-width:120px){.table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-120{display: none;}}
-                @container(max-width:240px){.table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-240{display: none;}}
-                @container(max-width:360px){.table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-360{display: none;}}
-                @container(max-width:480px){.table-b9ef1339-f9d6-4a86-988b-e0b673ca891a-column-480{display: none;}}
-              </style>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
