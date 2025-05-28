@@ -105,7 +105,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+        
         const firebaseConfig = {
             apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM", // Reemplaza con tu config si es diferente
             authDomain: "zetter-app.firebaseapp.com",
@@ -118,6 +119,7 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
         onAuthStateChanged(auth, (user) => {
             if (!user) {
