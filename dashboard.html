@@ -132,15 +132,15 @@
     fetch('header.html')
       .then(res => res.text())
       .then(html => {
-        console.log("Dashboard script: header.html fetched correctamente.");
+      // console.log("Dashboard script: header.html fetched correctamente.");
         const mainHeaderDiv = document.getElementById('main-header');
         if (mainHeaderDiv) {
             mainHeaderDiv.innerHTML = html;
-            console.log("Dashboard script: header.html inyectado en main-header.");
+           // console.log("Dashboard script: header.html inyectado en main-header.");
 
             const scripts = Array.from(mainHeaderDiv.querySelectorAll('script'));
             scripts.forEach((oldScript, index) => {
-              console.log(`Dashboard script: Procesando script ${index + 1} del header.`);
+            // console.log(`Dashboard script: Procesando script ${index + 1} del header.`);
               const newScript = document.createElement('script');
 
               Array.from(oldScript.attributes).forEach(attr => {
@@ -151,7 +151,7 @@
                 // Usamos textContent directamente para la asignación,
                 // ya que appendChild(createTextNode(...)) no funcionó antes.
                 newScript.textContent = oldScript.textContent;
-                console.log(`Dashboard script: Contenido del script ${index + 1} del header:`, newScript.textContent);
+               // console.log(`Dashboard script: Contenido del script ${index + 1} del header:`, newScript.textContent);
               } else if (oldScript.src) {
                 newScript.src = oldScript.src; // Para scripts con atributo src
               } else {
@@ -161,7 +161,7 @@
               }
 
               document.body.appendChild(newScript);
-              console.log(`Dashboard script: Script ${index + 1} del header re-añadido al body.`);
+              // console.log(`Dashboard script: Script ${index + 1} del header re-añadido al body.`);
               oldScript.remove();
             });
         } else {

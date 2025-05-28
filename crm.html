@@ -16,6 +16,9 @@
   <body class="bg-gradient-to-br from-[#f6f8fa] to-[#e3eaf6] dark:from-[#14213d] dark:to-[#22272b]">
     <div class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
       <div class="layout-container flex h-full grow flex-col">
+        <div id="main-header">
+    <!-- El header se cargará aquí -->
+        </div>
         <div class="gap-1 px-6 flex flex-1 justify-center py-5">
           <div class="layout-content-container flex flex-col w-80">
             <div class="px-4 py-3">
@@ -243,5 +246,44 @@
         </div>
       </div>
     </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+        const firebaseConfig = { /* ... tu config ... */ };
+        const app = initializeApp(firebaseConfig, "appointmentsApp"); // Nombre único para esta página
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            }
+        });
+
+        fetch('header.html')
+          .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            return res.text();
+          })
+          .then(html => {
+            const mainHeaderDiv = document.getElementById('main-header');
+            if (mainHeaderDiv) {
+                mainHeaderDiv.innerHTML = html;
+                const scripts = Array.from(mainHeaderDiv.querySelectorAll('script'));
+                scripts.forEach(oldScript => {
+                  const newScript = document.createElement('script');
+                  Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                  if (oldScript.textContent) newScript.textContent = oldScript.textContent;
+                  else if (oldScript.src) newScript.src = oldScript.src;
+                  else { oldScript.remove(); return; }
+                  document.body.appendChild(newScript);
+                  oldScript.remove();
+                });
+            } else {
+                console.error("Appointments page: Elemento con ID 'main-header' no encontrado.");
+            }
+          })
+          .catch(err => console.error("Appointments page: Error al cargar o procesar header.html:", err));
+    </script>
   </body>
 </html>

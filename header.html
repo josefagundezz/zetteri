@@ -61,7 +61,7 @@
     apiKey: "AIzaSyBppyJBT_uWC2hIJU-qnMZCNlac5uVTRmM",
     authDomain: "zetter-app.firebaseapp.com",
     projectId: "zetter-app",
-    storageBucket: "zetter-app.appspot.com", // Corregido de .firebasestorage.app a .appspot.com si ese es tu bucket real
+    storageBucket: "zetter-app.appspot.com",
     messagingSenderId: "386722095231",
     appId: "1:386722095231:web:f5abe66895fea3746bdf4a",
     measurementId: "G-D7E0PDYDN5"
@@ -75,7 +75,7 @@
   const userProfilePicDiv = document.getElementById('user-profile-picture');
   const logoutDropdownBtn = document.getElementById('logout-btn-dropdown');
 
-  console.log("Header Script: logoutDropdownBtn encontrado:", logoutDropdownBtn); // Para depurar
+  // console.log("Header Script: logoutDropdownBtn encontrado:", logoutDropdownBtn); // Comentado
 
   if (profileDropdownBtn && profileDropdown) {
     profileDropdownBtn.addEventListener('click', (e) => {
@@ -94,13 +94,12 @@
     console.error("Header Script: No se encontró el botón del dropdown o el panel del dropdown.");
   }
 
-  // Listener para el botón de Logout (se añade siempre que el botón exista)
   if (logoutDropdownBtn) {
     logoutDropdownBtn.addEventListener('click', async () => {
-      console.log("Header Script: Botón de logout clickeado."); // Para depurar
+      // console.log("Header Script: Botón de logout clickeado."); // Comentado
       try {
         await signOut(auth);
-        console.log("Usuario deslogueado exitosamente.");
+        // console.log("Usuario deslogueado exitosamente."); // Comentado
         window.location.href = 'index.html';
       } catch (error) {
         console.error("Error al desloguear:", error);
@@ -112,7 +111,7 @@
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("Usuario logueado:", user.email);
+      // console.log("Usuario logueado:", user.email); // Comentado
       if (userProfilePicDiv) {
         if (user.photoURL) {
           userProfilePicDiv.style.backgroundImage = `url('${user.photoURL}')`;
@@ -120,19 +119,11 @@
           userProfilePicDiv.style.backgroundImage = `url('https://assets.zyrosite.com/AoPqRVW0MkiDWnyz/my-notion-face-portrait-AR0MrvjwKosxVEgo.png')`;
         }
       }
-      // Lógica para mostrar/ocultar elementos del dropdown basados en el estado de login si es necesario
-      if (profileDropdown) {
-          // Por ejemplo, podrías querer mostrar el botón de logout solo si el usuario está logueado,
-          // aunque en tu HTML actual siempre está visible dentro del dropdown.
-      }
     } else {
-      console.log("Ningún usuario logueado.");
+      // console.log("Ningún usuario logueado."); // Comentado
       if (userProfilePicDiv) {
          userProfilePicDiv.style.backgroundImage = `url('https://assets.zyrosite.com/AoPqRVW0MkiDWnyz/my-notion-face-portrait-AR0MrvjwKosxVEgo.png')`;
       }
-      // Si el usuario se desloguea, y estás en una página protegida,
-      // la redirección a index.html ya debería ocurrir por el onAuthStateChanged de la página actual (ej. dashboard.html)
-      // Si esta es una página pública, podrías querer ocultar el botón de logout o el dropdown.
     }
   });
 </script>
